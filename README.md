@@ -1,5 +1,12 @@
 # Mental Growth Diary 
 
+<hr/> 
+
+## ERD
+![Mental](https://github.com/user-attachments/assets/bf3ad4b6-0bec-4aaa-b62e-600ed39e1fbd)
+
+
+
 ## 주제   
 
 하루를 기록하고 마음을 치유하는 심리 상담 일기 서비스입니다.   
