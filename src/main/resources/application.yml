@@ -12,10 +12,3 @@ spring:
     username: root
     password: zerobase
     driver-class-name: org.mariadb.jdbc.Driver
-
-  jwt:
-    secret: mE9pen9iqUzAGwVgRje3ZHzxMH4VU2AF9dPh1saYHTKX4sftBS527bKMUg1Oib6jJQV6ET0+rmdn8Y462CHclA==
-
-  logging:
-    level:
-      org.springframework.security: DEBUG
