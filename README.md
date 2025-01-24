@@ -3,9 +3,7 @@
 <hr/> 
 
 ## ERD
-![Mental (2)](https://github.com/user-attachments/assets/cbc4dcdf-7df2-4013-930a-1847e3e182bf)
-
-
+![Mental (3)](https://github.com/user-attachments/assets/f0a22552-0c1d-4ccf-b892-be82e2aca33a)
 
 
 
