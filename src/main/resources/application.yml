@@ -12,3 +12,10 @@ spring:
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
     driver-class-name: org.mariadb.jdbc.Driver
+
+  jwt:
+    secret: ${JWT_SECRET}
+
+logging:
+  level:
+    org.springframework.security: DEBUG
