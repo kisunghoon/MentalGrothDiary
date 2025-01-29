@@ -26,7 +26,6 @@ public class Counselor {
     @JoinColumn(name="user_id",nullable=false)
     private User user;
 
-    private String name;
     private String feature;
 
     @Column(columnDefinition = "JSON")

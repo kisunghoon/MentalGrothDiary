@@ -3,6 +3,12 @@ package com.zerobase.mentalgrowhdiary.domain;
 import com.zerobase.mentalgrowhdiary.type.Role;
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
+import java.util.Collection;
+import java.util.List;
 
 @Entity
 @Getter
@@ -17,7 +23,7 @@ public class User {
     private Long userId;
 
     @Column(nullable = false)
-    private String name;
+    private String username;
 
     @Column(nullable = false, unique = true)
     private String email;
@@ -27,5 +33,7 @@ public class User {
 
     @Enumerated(EnumType.STRING)
     private Role role;
+
+
 
 }
