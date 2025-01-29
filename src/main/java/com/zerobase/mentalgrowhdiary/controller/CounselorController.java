@@ -40,11 +40,11 @@ public class CounselorController {
      * 상담사 정보 수정 기능
      * */
     @PreAuthorize("hasRole('COUNSELOR')")
-    @PutMapping("/update")
-    public ResponseEntity<?> updateCounselorInfo(@RequestBody CounselorRequest request ,
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateCounselorInfo(@PathVariable Long id,@RequestBody CounselorRequest request ,
                                                  Authentication authentication) throws JsonProcessingException {
 
-
+        request.setUserId(id);
         counselorService.updateInfo(request);
 
         return ResponseEntity.ok("상담사 정보 수정이 완료되었습니다.");

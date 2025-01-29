@@ -38,14 +38,12 @@ public class UserService implements UserDetailsService {
 
     public User register(Auth.SignUp user){
 
-        boolean isExist = this.userRepository.existsByUsername(user.getUsername());
-        boolean isEmailExist = this.userRepository.existsByEmail(user.getEmail());
 
-        if(isExist){
+        if(this.userRepository.existsByUsername(user.getUsername())){
             throw new MentalGrowthException(ErrorCode.USER_ALREADY_EXIST);
         }
 
-        if(isEmailExist){
+        if(this.userRepository.existsByEmail(user.getEmail())){
             throw new MentalGrowthException(ErrorCode.EMAIL_ALERADY_EXIST);
         }
 

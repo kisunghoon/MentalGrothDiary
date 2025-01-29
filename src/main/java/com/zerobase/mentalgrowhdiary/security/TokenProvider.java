@@ -47,7 +47,7 @@ public class TokenProvider {
 
         } catch (IllegalArgumentException e) {
 
-            log.error("Failed to initialize TokenProvider : ", secretKeyEncoded);
+            log.error("Failed to initialize TokenProvider : {}", secretKeyEncoded);
             throw e;
         }
     }
@@ -57,7 +57,6 @@ public class TokenProvider {
         Claims claims = Jwts.claims().setSubject(username);
         claims.put("userId", userId);
         claims.put(KEY_ROLE, role.name());
-        System.out.println("Role in Token: " + claims.get(KEY_ROLE));
 
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + TOKEN_EXPIRE_TIME);
