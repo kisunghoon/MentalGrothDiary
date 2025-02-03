@@ -30,7 +30,7 @@ public class Diary {
     @Column(nullable = false)
     private LocalDate diaryDate;
 
-    @Column(columnDefinition = "JSON")
+    @Column(columnDefinition = "LONGTEXT")
     private String diaryContent;
 
     @Column(columnDefinition = "JSON")

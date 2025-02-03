@@ -2,14 +2,17 @@ package com.zerobase.mentalgrowhdiary.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.zerobase.mentalgrowhdiary.dto.CounselorRequest;
+import com.zerobase.mentalgrowhdiary.dto.CounselorResponseDto;
 import com.zerobase.mentalgrowhdiary.service.CounselorService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
 
 @Slf4j
 @RestController
@@ -21,14 +24,22 @@ public class CounselorController {
 
     /**
      * 상담사 정보 입력 기능
+     * {
+     *   "userId": ,
+     *   "feature": "SAMPLE특징",
+     *   "keywords": ["SAMPLE특징"],
+     *   "availableSlots": [
+     *     {"day": "Monday", "time": "10:00-12:00"},
+     *     {"day": "Wednesday", "time": "14:00-16:00"}
+     *   ]
+     * }
      * */
     @PreAuthorize("hasRole('COUNSELOR')")
     @PostMapping("/register")
     public ResponseEntity<?> registerCounselorInfo(@RequestBody CounselorRequest request,
-                                                Authentication authentication) throws JsonProcessingException {
+                                                   Authentication authentication) throws JsonProcessingException {
 
         String counselor = authentication.getName();
-
 
         counselorService.registerInfo(request,counselor);
 
@@ -41,15 +52,30 @@ public class CounselorController {
      * */
     @PreAuthorize("hasRole('COUNSELOR')")
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateCounselorInfo(@PathVariable Long id,@RequestBody CounselorRequest request ,
-                                                 Authentication authentication) throws JsonProcessingException {
+    public ResponseEntity<?> updateCounselorInfo(@PathVariable Long id, @RequestBody CounselorRequest request
+                                                ,Authentication authentication) throws JsonProcessingException {
+
+        String counselor = authentication.getName();
 
         request.setUserId(id);
-        counselorService.updateInfo(request);
+        counselorService.updateInfo(counselor,request);
 
         return ResponseEntity.ok("상담사 정보 수정이 완료되었습니다.");
 
-
     }
+
+    @PreAuthorize("hasAnyRole('COUNSELOR','CLIENT')")
+    @GetMapping("/search")
+    public ResponseEntity<List<CounselorResponseDto>> searchCounselors(
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false) String feature,
+            @RequestParam(required = false) List<String> keywords
+    ){
+        List<CounselorResponseDto> results = counselorService.searchCounselors(name,feature,keywords);
+
+        return ResponseEntity.ok(results);
+    }
+
+
 
 }
