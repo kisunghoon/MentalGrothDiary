@@ -64,6 +64,7 @@ public class CounselorService {
 
         List<Counselor> counselors = counselorRepository.searchCounselors(name, feature, keywords);
 
-        return counselors.stream().map(CounselorResponseDto::fromEntity).toList();
+        return counselors.stream().map(
+                counselor -> CounselorResponseDto.fromEntity(counselor,objectMapper)).toList();
     }
 }

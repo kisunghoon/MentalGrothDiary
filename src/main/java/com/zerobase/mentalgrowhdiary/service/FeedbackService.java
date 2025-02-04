@@ -42,9 +42,8 @@ public class FeedbackService {
             throw new MentalGrowthException(ErrorCode.FORBIDDEN);
         }
 
-        Optional<Feedback> existFeedback = feedbackRepository.findByDiary(diary);
 
-        if(existFeedback.isPresent()) {
+        if(feedbackRepository.findByDiary(diary).isPresent()) {
             throw new MentalGrowthException(ErrorCode.FEEDBACK_ALREADY_REQUEST);
         }
 

@@ -22,24 +22,20 @@ public class CounselorResponseDto {
     private List<String> keywords;
     private List<Map<String,String>> availableSlots;
 
-
-    private static final ObjectMapper objectMapper = new ObjectMapper();
-
-
-    public static CounselorResponseDto fromEntity(Counselor counselor) {
+    public static CounselorResponseDto fromEntity(Counselor counselor, ObjectMapper objectMapper) {
         return new CounselorResponseDto(
                 counselor.getCounselorId(),
                 counselor.getUser().getUsername(),
                 counselor.getFeature(),
-                parseJsonList(counselor.getKeywords()),
-                parseJsonMapList(counselor.getAvailableSlots())
+                parseJsonList(counselor.getKeywords(),objectMapper),
+                parseJsonMapList(counselor.getAvailableSlots(),objectMapper)
         );
     }
 
     /**
      * JSON -> List<String>
      */
-    private static List<String> parseJsonList(String json) {
+    private static List<String> parseJsonList(String json,ObjectMapper objectMapper) {
 
         if(json == null || json.isEmpty()){
             return Collections.emptyList();
@@ -57,7 +53,7 @@ public class CounselorResponseDto {
     /**
      * JSON -> List<Map<String,String>> 변환 하는 메서드
      */
-    private static List<Map<String,String>> parseJsonMapList(String json) {
+    private static List<Map<String,String>> parseJsonMapList(String json,ObjectMapper objectMapper) {
         if(json == null || json.isEmpty()){
             return Collections.emptyList();
         }
@@ -69,20 +65,4 @@ public class CounselorResponseDto {
         }
     }
 
-    /**
-     * availableSlots에서 day 리스트 만 추출
-     */
-/*
-    public List<String> getDays(){
-        return availableSlots.stream().map(slot -> slot.get("day")).toList();
-    } */
-
-    /**
-     * availableSlots에서 time 리스트만 추출
-     */
-/*
-    public List<String> getTimes(){
-        return availableSlots.stream().map(slot -> slot.get("time")).toList();
-    }
-*/
 }
