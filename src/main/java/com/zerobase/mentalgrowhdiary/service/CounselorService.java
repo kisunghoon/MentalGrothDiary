@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.zerobase.mentalgrowhdiary.domain.Counselor;
 import com.zerobase.mentalgrowhdiary.domain.User;
 import com.zerobase.mentalgrowhdiary.dto.CounselorRequest;
+import com.zerobase.mentalgrowhdiary.dto.CounselorResponseDto;
 import com.zerobase.mentalgrowhdiary.exception.MentalGrowthException;
 import com.zerobase.mentalgrowhdiary.repository.CounselorRepository;
 import com.zerobase.mentalgrowhdiary.repository.UserRepository;
@@ -13,6 +14,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @Slf4j
@@ -38,19 +41,30 @@ public class CounselorService {
 
         counselorRepository.save(counselor);
     }
+
     @Transactional
-    public void updateInfo(CounselorRequest request) throws JsonProcessingException {
+    public void updateInfo(String counselorName,CounselorRequest request) throws JsonProcessingException {
 
+        User user = userRepository.findByUsername(counselorName)
+                .orElseThrow(() -> new MentalGrowthException(ErrorCode.USER_NOT_FOUND));
 
-        Counselor counselor = counselorRepository.findByUser_UserId(request.getUserId())
+        Counselor counselor = counselorRepository.findByUser(user)
                 .orElseThrow(() -> new MentalGrowthException(ErrorCode.COUNSELOR_NOT_FOUND));
 
 
         counselor.setFeature(request.getFeature());
         counselor.setKeywords(objectMapper.writeValueAsString(request.getKeywords()));
-        counselor.setAvailableSlots(objectMapper.writeValueAsString(request.getKeywords()));
+        counselor.setAvailableSlots(objectMapper.writeValueAsString(request.getAvailableSlots()));
 
         counselorRepository.save(counselor);
+    }
 
+    @Transactional(readOnly = true)
+    public List<CounselorResponseDto> searchCounselors(String name, String feature, List<String> keywords) {
+
+        List<Counselor> counselors = counselorRepository.searchCounselors(name, feature, keywords);
+
+        return counselors.stream().map(
+                counselor -> CounselorResponseDto.fromEntity(counselor,objectMapper)).toList();
     }
 }

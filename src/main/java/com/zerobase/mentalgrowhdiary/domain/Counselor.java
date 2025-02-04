@@ -2,11 +2,15 @@ package com.zerobase.mentalgrowhdiary.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Map;
 
 @EntityListeners(AuditingEntityListener.class)
 @Entity
@@ -28,11 +32,11 @@ public class Counselor {
 
     private String feature;
 
-    @Column(columnDefinition = "JSON")
+    @Column(name="keywords",columnDefinition = "JSON")
     private String keywords;
 
-    @Column(columnDefinition = "JSON")
-    private String availableSlots;
+    @Column(name="available_slots",columnDefinition = "JSON")
+    private String  availableSlots;
 
     @CreatedDate
     private LocalDateTime createdDate;

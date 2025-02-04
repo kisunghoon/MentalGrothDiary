@@ -30,6 +30,9 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/signup","/auth/signin").permitAll()
                         .requestMatchers("/counselor/register").hasAuthority("ROLE_COUNSELOR")
+                        .requestMatchers("/counselor/search").hasAnyAuthority("ROLE_COUNSELOR", "ROLE_CLIENT")
+                        .requestMatchers("/user-counselor/choice").hasAuthority("ROLE_CLIENT")
+                        .requestMatchers("/user-counselor/change").hasAuthority("ROLE_CLIENT")
                         .anyRequest().authenticated())
                 .exceptionHandling(exception -> exception
                         .accessDeniedHandler(accessDeniedHandler())
