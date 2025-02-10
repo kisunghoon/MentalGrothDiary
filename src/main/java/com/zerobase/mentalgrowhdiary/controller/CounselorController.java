@@ -1,6 +1,7 @@
 package com.zerobase.mentalgrowhdiary.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.zerobase.mentalgrowhdiary.dto.ClientDiaryResponseDto;
 import com.zerobase.mentalgrowhdiary.dto.CounselorRequest;
 import com.zerobase.mentalgrowhdiary.dto.CounselorResponseDto;
 import com.zerobase.mentalgrowhdiary.service.CounselorService;
@@ -64,6 +65,13 @@ public class CounselorController {
 
     }
 
+    /**
+     * 상담사 검색
+     * @param name
+     * @param feature
+     * @param keywords
+     * @return
+     */
     @PreAuthorize("hasAnyRole('COUNSELOR','CLIENT')")
     @GetMapping("/search")
     public ResponseEntity<List<CounselorResponseDto>> searchCounselors(
@@ -76,6 +84,16 @@ public class CounselorController {
         return ResponseEntity.ok(results);
     }
 
+    /**
+     * 내담자 일기 조회
+     */
 
+    @PreAuthorize("hasRole('COUNSELOR')")
+    @GetMapping("/clientDiaries")
+    public ResponseEntity<List<ClientDiaryResponseDto>> getClientDiaries(Authentication authentication){
 
+        String counselorName = authentication.getName();
+        return ResponseEntity.ok(counselorService.getClientDiaries(counselorName));
+
+    }
 }

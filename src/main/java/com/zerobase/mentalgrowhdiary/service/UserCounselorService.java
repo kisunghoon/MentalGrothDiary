@@ -65,7 +65,7 @@ public class UserCounselorService {
         log.info("hasProgessFeedback : {}",hasProgessFeedback);
 
         if(hasProgessFeedback >= 1){
-            throw new MentalGrowthException(ErrorCode.FEEDBACK_ALREADY_REQUEST);
+            throw new MentalGrowthException(ErrorCode.FEEDBACK_PROGESS);
         }
 
 

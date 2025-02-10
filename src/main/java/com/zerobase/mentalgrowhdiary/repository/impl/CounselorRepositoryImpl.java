@@ -37,6 +37,7 @@ public class CounselorRepositoryImpl implements CounselorRepositoryCustom {
             }
         }
 
+
         return queryFactory.selectFrom(counselor).where(builder).fetch();
     }
 }

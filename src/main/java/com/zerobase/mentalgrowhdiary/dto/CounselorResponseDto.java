@@ -35,7 +35,7 @@ public class CounselorResponseDto {
     /**
      * JSON -> List<String>
      */
-    private static List<String> parseJsonList(String json,ObjectMapper objectMapper) {
+   private static List<String> parseJsonList(String json,ObjectMapper objectMapper) {
 
         if(json == null || json.isEmpty()){
             return Collections.emptyList();

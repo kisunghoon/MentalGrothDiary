@@ -3,19 +3,22 @@ package com.zerobase.mentalgrowhdiary.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.zerobase.mentalgrowhdiary.domain.Counselor;
+import com.zerobase.mentalgrowhdiary.domain.Diary;
 import com.zerobase.mentalgrowhdiary.domain.User;
+import com.zerobase.mentalgrowhdiary.dto.ClientDiaryResponseDto;
 import com.zerobase.mentalgrowhdiary.dto.CounselorRequest;
 import com.zerobase.mentalgrowhdiary.dto.CounselorResponseDto;
 import com.zerobase.mentalgrowhdiary.exception.MentalGrowthException;
-import com.zerobase.mentalgrowhdiary.repository.CounselorRepository;
-import com.zerobase.mentalgrowhdiary.repository.UserRepository;
+import com.zerobase.mentalgrowhdiary.repository.*;
 import com.zerobase.mentalgrowhdiary.type.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
+
 
 @Service
 @Slf4j
@@ -23,6 +26,7 @@ import java.util.List;
 public class CounselorService {
 
     private final CounselorRepository counselorRepository;
+    private final UserCounselorRepository userCounselorRepository;
     private final UserRepository userRepository;
     private final ObjectMapper objectMapper;
 
@@ -67,4 +71,24 @@ public class CounselorService {
         return counselors.stream().map(
                 counselor -> CounselorResponseDto.fromEntity(counselor,objectMapper)).toList();
     }
+
+    @Transactional(readOnly = true)
+    public List<ClientDiaryResponseDto> getClientDiaries(String counselorName) {
+
+
+        List<Diary> diaries = userCounselorRepository.findClientDiaryByConditions(counselorName);
+
+        return diaries.stream()
+                .map(diary -> {
+                    return new ClientDiaryResponseDto(
+                            diary.getUser().getUserId(),
+                            diary.getUser().getUsername(),
+                            diary.getDiaryId(),
+                            diary.getDiaryContent(),
+                            diary.getDiaryDate()
+                    );
+                })
+                .toList();
+    }
+
 }

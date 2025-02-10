@@ -75,7 +75,7 @@ public class DiaryController {
     }
 
     /**
-     * 일기 조회
+     * 사용자 일기 조회
      * @param diaryDate
      * @param hashtag
      * @return
@@ -95,6 +95,21 @@ public class DiaryController {
         return ResponseEntity.ok(results);
     }
 
+    /**
+     * 해시태그 접두사 기준 단어
+     * @param authentication
+     * @param prefix
+     * @return
+     * @throws JsonProcessingException
+     */
+    @PreAuthorize("hasRole('CLIENT')")
+    @GetMapping("/hashtag")
+    public ResponseEntity<List<String>> getHashtagSuggest(Authentication authentication,@RequestParam String prefix) throws JsonProcessingException {
 
+        String client = authentication.getName();
 
+        List<String> suggestion = diaryService.getHashtagSuggest(client,prefix);
+
+        return ResponseEntity.ok(suggestion);
+    }
 }

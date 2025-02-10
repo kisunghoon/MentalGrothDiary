@@ -12,4 +12,6 @@ import java.util.Optional;
 public interface CounselorRepository extends JpaRepository<Counselor, Long>, CounselorRepositoryCustom {
 
     Optional<Counselor> findByUser(User user);
+
+    Optional<Counselor> findByUser_Username(String username);
 }

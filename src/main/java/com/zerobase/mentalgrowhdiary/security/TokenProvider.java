@@ -105,7 +105,7 @@ public class TokenProvider {
         String username = getUsername(token);
 
         UserDetails userDetails = userService.loadUserByUsername(username);
-        System.out.println("getAuthentication : "+userDetails.getAuthorities()); // 여기서 Role 출력
+
         return new UsernamePasswordAuthenticationToken(userDetails,
                 null, userDetails.getAuthorities());
     }

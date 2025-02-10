@@ -23,8 +23,12 @@ public enum ErrorCode {
     DIARY_HAS_FEEDBACK("해당 일기는 피드백이 존재하여 삭제할 수 없습니다."),
     NOT_YET_SELECTED_COUNSELOR("상담사가 아직 선정되지 않았습니다, 일기를 작성하기 전에 상담사를 선정해 주세요."),
     FEEDBACK_ALREADY_REQUEST("피드백이 이미 존재합니다."),
-    FEEDBACK_PROGESS("피드백이 진행중인 상태일때는 상담사를 변경할 수  없습니다."),
+    FEEDBACK_PROGESS("피드백이 진행중인 상태일때는 상담사를 변경할 수 없습니다."),
     NO_AVAILABLE_SLOTS("상담시간이 아닙니다, 다른 시간에 신청해주세요"),
+    EVALUATION_NOT_FOUND_ID("상담사 평가 일지 ID를 찾을 수 없습니다."),
+    FEEDBACK_NOT_FOUND("잘못된 피드백 주소입니다."),
+    RESERVATION_NOT_FOUND("예약 아이디가 발견되지 않았습니다."),
+    MAIL_SEND_FAIL("메일 전송이 실패하였습니다."),
     FORBIDDEN("접근 권한이 없습니다."),
     INTERNAL_SERVER_ERROR("내부 서버 오류가 발생하였습니다.");
 
