@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.zerobase.mentalgrowhdiary.domain.Counselor;
 import com.zerobase.mentalgrowhdiary.domain.Reservation;
 import com.zerobase.mentalgrowhdiary.domain.User;
+import com.zerobase.mentalgrowhdiary.dto.DecisionRequest;
 import com.zerobase.mentalgrowhdiary.dto.ReservationRequest;
 import com.zerobase.mentalgrowhdiary.exception.MentalGrowthException;
 import com.zerobase.mentalgrowhdiary.repository.CounselorRepository;
@@ -19,7 +20,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
@@ -33,6 +36,7 @@ public class ReservationService {
     private final CounselorRepository counselorRepository;
     private final ReservationRepository reservationRepository;
     private final ObjectMapper objectMapper;
+    private final MailService mailService;
 
     @Transactional(isolation = Isolation.SERIALIZABLE)
     public void registerReservation(ReservationRequest request, String client) throws JsonProcessingException {
@@ -56,6 +60,8 @@ public class ReservationService {
                 .build();
 
         reservationRepository.save(reservation);
+
+
     }
 
     private void validationReservationTime(LocalDateTime reservationTime , Counselor counselor) throws JsonProcessingException {
@@ -65,7 +71,6 @@ public class ReservationService {
         int hour = reservationTime.getHour();
 
         List<Map<String,String>> availableSlots = parseAvailableSlots(counselor.getAvailableSlots());
-
         boolean isAvailable = availableSlots.stream().anyMatch(slot -> {
            String day = slot.get("day");
            String time = slot.get("time");
@@ -90,5 +95,64 @@ public class ReservationService {
         int endHour = Integer.parseInt(times[1].split(":")[0]);
 
         return hour >= startHour && hour <= endHour;
+    }
+
+    @Transactional
+    public void decisionReservation(Long reservationId,String counselorName , DecisionRequest request){
+
+        Counselor counselor = counselorRepository.findByUser_Username(counselorName)
+                .orElseThrow(() -> new MentalGrowthException(ErrorCode.COUNSELOR_NOT_FOUND));
+
+
+        Reservation reservation = reservationRepository.findById(reservationId)
+                .orElseThrow(() -> new MentalGrowthException(ErrorCode.RESERVATION_NOT_FOUND));
+
+        reservation.setStatus(request.getReservationStatus());
+
+        reservationRepository.save(reservation);
+
+        String subject = "예약 상태 변경 알림";
+        String body = mailService.getReservationStatusTemplate(reservation.getUser().getEmail(), String.valueOf(request.getReservationStatus()));
+
+
+        boolean isMailSent = mailService.sendMail(reservation.getUser().getEmail(), subject, body);
+
+        if(!isMailSent) {
+            throw new MentalGrowthException(ErrorCode.MAIL_SEND_FAIL);
+        }
+    }
+
+    @Transactional
+    public void sendDailyCounselingReminders(){
+
+        LocalDate today = LocalDate.now();
+        LocalDateTime startDate = today.atStartOfDay();
+        LocalDateTime endDate = today.atTime(LocalTime.MAX);
+
+        List<Reservation> reservations = reservationRepository.findByReservationDateTimeBetween(startDate,endDate);
+
+        if(reservations.isEmpty()) {
+            return;
+        }
+
+        for(Reservation reservation : reservations) {
+            sendDailyCounselingReminder(reservation);
+        }
+    }
+
+    private void sendDailyCounselingReminder(Reservation reservation) {
+        String counselorEmail = reservation.getCounselor().getUser().getEmail();
+        String counselorName = reservation.getCounselor().getUser().getUsername();
+        String clientName = reservation.getUser().getUsername();
+
+        String subject = "당일 상담 일정 알림 ";
+        String body = mailService.getOfflineCounselingReminderTemplate(clientName,counselorName);
+
+
+       boolean isMailSent = mailService.sendMail(counselorEmail, subject, body);
+
+       if(!isMailSent) {
+           throw new MentalGrowthException(ErrorCode.MAIL_SEND_FAIL);
+       }
     }
 }

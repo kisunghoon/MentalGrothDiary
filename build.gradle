@@ -29,6 +29,8 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation group: 'org.jsoup', name: 'jsoup' , version: '1.15.3'
     implementation 'com.fasterxml.jackson.core:jackson-databind'
+    //mail
+    implementation 'org.springframework.boot:spring-boot-starter-mail'
     //QueryDsl
     implementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta'
     annotationProcessor "com.querydsl:querydsl-apt:5.0.0:jakarta"

@@ -8,7 +8,6 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
 
-
 @EntityListeners(AuditingEntityListener.class)
 @Entity
 @Getter
@@ -16,24 +15,22 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Counselor {
-
+public class Evaluation {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long counselorId;
+    private Long evaluationId;
 
-    @OneToOne
-    @JoinColumn(name="user_id",nullable=false)
-    private User user;
+    @ManyToOne
+    @JoinColumn(name = "diary_id",nullable = false)
+    private Diary diary;
 
-    private String feature;
+    @ManyToOne
+    @JoinColumn(name="counselor_id",nullable = false)
+    private Counselor counselor;
 
-    @Column(name="keywords",columnDefinition = "JSON")
-    private String keywords;
-
-    @Column(name="available_slots",columnDefinition = "JSON")
-    private String  availableSlots;
+    @Column(columnDefinition = "LONGTEXT")
+    private String assessment;
 
     @CreatedDate
     private LocalDateTime createdDate;

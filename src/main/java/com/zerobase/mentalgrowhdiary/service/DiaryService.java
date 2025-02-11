@@ -18,7 +18,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -106,6 +109,28 @@ public class DiaryService {
         List<Diary> diaries = diaryRepository.searchDiaries(user.getUserId(),diaryDate,hashtag);
 
         return diaries.stream().map(DiaryResponseDto::fromEntity).toList();
+    }
+
+    @Transactional(readOnly = true)
+    public List<String> getHashtagSuggest(String client,String prefix) throws JsonProcessingException {
+
+        User user = userRepository.findByUsername(client)
+                .orElseThrow(() -> new MentalGrowthException(ErrorCode.USER_NOT_FOUND));
+
+        List<Diary> diaries = diaryRepository.findTop7ByUserOrderByDiaryDateDesc(user);
+
+        Set<String> hashtagSet = new HashSet<>();
+
+        for(Diary diary : diaries){
+            List<String> diaryHashtags = objectMapper.readValue(diary.getHashtag(), List.class);
+            hashtagSet.addAll(diaryHashtags);
+        }
+
+        return hashtagSet.stream()
+                .filter(tag -> tag.startsWith(prefix))
+                .sorted()
+                .collect(Collectors.toList());
+
     }
 
 }

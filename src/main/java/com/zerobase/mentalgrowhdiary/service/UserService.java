@@ -24,6 +24,7 @@ public class UserService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        log.info("loadUserByUsername :{}", username);
         User user = this.userRepository.findByUsername(username)
                 .orElseThrow(() -> new MentalGrowthException(ErrorCode.USER_NOT_FOUND));
 
@@ -62,6 +63,8 @@ public class UserService implements UserDetailsService {
         if(!passwordEncoder.matches(signUser.getPassword(), user.getPassword())){
             throw new MentalGrowthException(ErrorCode.PASSWORD_NOT_MATCH);
         }
+
+        log.info("로그인 성공 ");
 
         return user;
     }
