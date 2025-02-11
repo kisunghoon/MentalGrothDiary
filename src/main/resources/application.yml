@@ -1,6 +1,8 @@
 spring:
   application:
     name: MentalGrowhDiary
+  profiles:
+    active: ${PROFILE}
   jpa:
     hibernate.metadata_builder_contributor: com.zerobase.mentalgrowhdiary.config.ApplySQLFunction
     hibernate:
