@@ -15,7 +15,7 @@ public class UserCounselorRepositoryImpl implements UserCounselorRepositoryCusto
 
     // 상담사에게 피드백 요청된 다이어리 조회
     @Override
-    public List<Diary> findClientDiaryByConditions(String counselorName) {
+    public List<Diary> findClientDiaryByCounselorName(String counselorName) {
 
         QDiary diary = QDiary.diary;
         QFeedback feedback = QFeedback.feedback;

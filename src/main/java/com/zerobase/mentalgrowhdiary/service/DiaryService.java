@@ -130,6 +130,7 @@ public class DiaryService {
                 .filter(tag -> tag.startsWith(prefix))
                 .sorted()
                 .collect(Collectors.toList());
+
     }
 
 }

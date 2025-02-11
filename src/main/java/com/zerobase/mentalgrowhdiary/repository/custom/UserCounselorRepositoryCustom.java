@@ -6,5 +6,5 @@ import java.util.List;
 
 public interface UserCounselorRepositoryCustom {
 
-    List<Diary> findClientDiaryByConditions(String counselorName);
+    List<Diary> findClientDiaryByCounselorName(String counselorName);
 }

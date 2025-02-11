@@ -17,26 +17,6 @@ public class MailService {
 
     private static final String FROM_EMAIL = "kisunghoon29@gmail.com";
 
-    public void sendMailTest() {
-        try{
-            MimeMessage message = mailSender.createMimeMessage();
-            MimeMessageHelper helper = new MimeMessageHelper(message,false,"UTF-8");
-
-            helper.setTo("kisunghoon22@naver.com");
-            helper.setSubject("메일 테스트 기능입니다.");
-            helper.setText("테스트 입니다.",false);
-            helper.setFrom(FROM_EMAIL);
-
-
-            mailSender.send(message);
-            log.info("메일 전송 완료~~!");
-
-
-        } catch(MessagingException e){
-            log.error("메일 전송 실패" + e.getMessage());
-        }
-    }
-
     public boolean sendMail(String toMail, String subject, String body){
 
         try{
@@ -67,12 +47,16 @@ public class MailService {
 
     }
 
-    public String getFeedbackReminderTemplate(String counselorName, String clientName, Long diaryId) {
+    public String getFeedbackReminderTemplate(String counselorName, String info) {
 
-        return "<h3>안녕하세요 ," + counselorName + "님!</h3>"
-                + "<p>" + clientName + "의 작성한 일기 "+ " 의 대한 피드백이 아직 작성되지 않았습니다.</p>"
-                + "<p> 빠른 시일 내의 피드백을 작성해주시길 부탁 드립니다.</p>"
-                + "<p> 감사합니다.</p>";
+        return String.format(
+                "<p>안녕하세요 %s 상담사님</p>"
+                        + "<p> 다음의 피드백이 아직 작성되지 않았습니다: </p>"
+                        + "<p> %s </p>"
+                        + "<p> 빠른 시일 내에 피드백을 작성해 주세요. </p>"
+                        + "<p> 감사합니다. </p>",
+                counselorName, info
+        );
     }
 
     /**

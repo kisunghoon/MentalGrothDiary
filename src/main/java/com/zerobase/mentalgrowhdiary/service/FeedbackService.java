@@ -16,7 +16,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -129,8 +132,6 @@ public class FeedbackService {
         }
 
         feedback.setFeedbackContent(request.getFeedbackContent());
-        feedback.setUpdatedDate(LocalDateTime.now());
-
 
         feedbackRepository.save(feedback);
     }
@@ -155,12 +156,39 @@ public class FeedbackService {
             return;
         }
 
-        for(Feedback feedback : pendingFeedback){
-            sendFeedbackReminder(feedback);
+        Map<Counselor, List<Feedback>> feedbackGroupByCounselor = pendingFeedback.stream().
+                collect(Collectors.groupingBy(Feedback::getCounselor));
+
+
+        for(Map.Entry<Counselor, List<Feedback>> entry : feedbackGroupByCounselor.entrySet()){
+            sendFeedbackReminder(entry.getKey(),entry.getValue());
+        }
+
+    }
+
+    private void sendFeedbackReminder(Counselor counselor, List<Feedback> feedbackList) {
+        String counselorName = counselor.getUser().getUsername();
+        String counselorEmail = counselor.getUser().getEmail();
+
+        StringBuilder sb = new StringBuilder();
+
+        for(Feedback feedback : feedbackList){
+            String clientName = feedback.getDiary().getUser().getUsername();
+            Long diaryId = feedback.getDiary().getDiaryId();
+            sb.append(String.format("클라이언트: %s, 일기 ID: %d%n", clientName, diaryId));
+        }
+
+        String subject = "피드백 작성 촉구 안내";
+        String body = mailService.getFeedbackReminderTemplate(counselorName,sb.toString());
+
+        boolean isMailSent = mailService.sendMail(counselorEmail, subject, body);
+
+        if(!isMailSent) {
+            throw new MentalGrowthException(ErrorCode.MAIL_SEND_FAIL);
         }
     }
 
-    public void sendFeedbackReminder(Feedback feedback){
+  /*  public void sendFeedbackReminder(Feedback feedback){
 
         String counselorName = feedback.getCounselor().getUser().getUsername();
         String clientName = feedback.getDiary().getUser().getUsername();
@@ -175,5 +203,5 @@ public class FeedbackService {
         if(!isMailSent) {
             throw new MentalGrowthException(ErrorCode.MAIL_SEND_FAIL);
         }
-    }
+    }*/
 }

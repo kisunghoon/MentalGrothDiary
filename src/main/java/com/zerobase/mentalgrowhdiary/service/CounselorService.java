@@ -76,9 +76,7 @@ public class CounselorService {
     public List<ClientDiaryResponseDto> getClientDiaries(String counselorName) {
 
 
-        List<Diary> diaries = userCounselorRepository.findClientDiaryByConditions(counselorName);
-
-        return diaries.stream()
+        return userCounselorRepository.findClientDiaryByCounselorName(counselorName).stream()
                 .map(diary -> {
                     return new ClientDiaryResponseDto(
                             diary.getUser().getUserId(),

@@ -1,6 +1,7 @@
 package com.zerobase.mentalgrowhdiary.repository.impl;
 
 import com.querydsl.core.types.Projections;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.zerobase.mentalgrowhdiary.domain.*;
@@ -52,13 +53,46 @@ public class FeedbackRepositoryImpl implements FeedbackRepositoryCustom {
                                         .where(r2.user.eq(qUser))
                         )))
                 .where(
-                        username != null ? qUser.username.containsIgnoreCase(username) : null,
-                        feedbackStatus != null ? qFeedback.feedbackStatus.eq(FeedbackStatus.valueOf(feedbackStatus)) : null,
-                        reservationStatus != null ? qReservation.status.eq(ReservationStatus.valueOf(reservationStatus)) : null,
-                        reservationDate != null ? qReservation.reservationDateTime.goe(reservationDate) : null
+                        containUserNameIgnoreCase(username),
+                        eqFeedbackStatus(feedbackStatus),
+                        eqReservationStatus(reservationStatus),
+                        goeReservationDate(reservationDate)
                 )
                 .orderBy(qFeedback.createdDate.desc())
                 .fetch();
 
+    }
+
+    private BooleanExpression containUserNameIgnoreCase(String username){
+        if (username == null || username.isBlank()) {
+            return null;
+        }
+        return QUser.user.username.containsIgnoreCase(username);
+    }
+
+    private BooleanExpression eqFeedbackStatus(String feedbackStatus){
+        if(feedbackStatus == null || feedbackStatus.isBlank()) {
+            return null;
+        }
+
+        return QFeedback.feedback.feedbackStatus.eq(FeedbackStatus.valueOf(feedbackStatus));
+    }
+
+    private BooleanExpression eqReservationStatus(String reservationStatus){
+
+        if(reservationStatus == null || reservationStatus.isBlank()) {
+            return null;
+        }
+
+        return QReservation.reservation.status.eq(ReservationStatus.valueOf(reservationStatus));
+    }
+
+    private BooleanExpression goeReservationDate(LocalDateTime reservationDate){
+
+        if(reservationDate == null) {
+            return null;
+        }
+
+        return QReservation.reservation.reservationDateTime.goe(reservationDate);
     }
 }
